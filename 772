@@ -1,1 +1,142 @@
 
+// method 1 - two stacks: 
+class Solution {
+    private static final HashMap<Character, Integer> hmap = new HashMap<Character, Integer>() {{
+                            put('+', 1);
+                            put('-', 1);
+                            put('*', 2);
+                            put('/', 2);
+                        }};
+    
+    public int calculate(String s) {
+        if(s == null) {
+            throw new IllegalArgumentException();
+        }
+        
+        int len = s.length();
+        Stack<Integer> nums = new Stack<>();
+        Stack<Character> opters = new Stack<>();
+        
+        addOpter('(', nums, opters, s, -1);
+        
+        int i=0;
+        while(i<len) {
+            char ch = s.charAt(i);
+            if(hmap.containsKey(ch) || ch == '(' || ch == ')') {
+                addOpter(ch, nums, opters, s, i);
+                i++;
+            } else if(ch>='0' && ch<='9') {
+                int num = 0;
+                while(i<len && s.charAt(i) >= '0' && s.charAt(i) <= '9') {
+                    num = num * 10 + (s.charAt(i)-'0');
+                    i++;
+                }
+                nums.push(num);
+            } else if(ch == ' ') {
+                i++;
+            } else {
+                throw new IllegalArgumentException();
+            }
+        }
+        addOpter(')', nums, opters, s, len);
+        return nums.peek();
+    }
+    
+    private void addOpter(char optr, Stack<Integer> nums, Stack<Character> opters, String s, int i) {
+        if(optr == '(') {
+            opters.push(optr);
+            int idx = i+1;
+            while(idx < s.length()) {
+                char ch = s.charAt(idx);
+                if(ch == ' ') idx++;
+                else {
+                    if(ch == '-') nums.push(0);
+                    break;
+                }
+            }
+        }else if (optr == ')') {
+            while(!opters.isEmpty()) {
+                char cur = opters.pop();
+                if(cur == '(') break;
+                
+                int num2 = nums.pop();
+                int num1 = nums.pop();
+                nums.push(cal(cur, num1, num2));
+            }
+        } else if(hmap.containsKey(optr)) {
+            while(true) {
+                if(opters.isEmpty()) break;
+                
+                char top = opters.peek();
+                Integer wei = hmap.get(top);
+                if(wei == null || wei < hmap.get(optr)) break;
+                
+                int num2 = nums.pop();
+                int num1 = nums.pop();
+                nums.push(cal(opters.pop(), num1, num2));
+            }
+            opters.push(optr);
+        } else {
+            throw new IllegalStateException();
+        }
+    }
+    
+    private int cal(char optr, int num1, int num2) {
+        switch(optr) {
+            case '+': return num1 + num2;
+            case '-': return num1 - num2;
+            case '*': return num1 * num2;
+            case '/': return num1 / num2;
+            default: throw new IllegalStateException();
+        }
+    }
+}
+
+
+// method 2 - one stack:
+
+class Solution {
+    public int calculate(String s) {
+        if(s.length() == 0) return 0;
+        int pre = 0, res = 0;
+        char sign = '+';
+        Stack<Integer> stack = new Stack<>();
+        for(int i=0; i<s.length(); i++) {
+            char ch = s.charAt(i);
+            if(Character.isDigit(ch)) {
+                pre = pre*10 + (ch-'0');
+            }
+            if(ch == '(') {
+                int j = findClose(s.substring(i));
+                pre = calculate(s.substring(i+1, i+j));
+                i += j;
+            }
+            if(i == s.length()-1 || ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == ')') {
+                switch(sign) {
+                    case '+' : stack.push(pre); break;
+                    case '-' : stack.push(-pre); break;
+                    case '*' : stack.push(stack.pop() * pre); break;
+                    case '/' : stack.push(stack.pop() / pre); break;
+                }
+                pre = 0;
+                sign = ch;
+            }
+        }
+        while(!stack.isEmpty()) res += stack.pop();
+        return res;
+    }
+    
+    private int findClose(String sub) {
+        int level = 0;
+        int i=0;
+        for(i=0; i<sub.length(); i++) {
+            if(sub.charAt(i) == '(') level++;
+            else if(sub.charAt(i) == ')') {
+                level--;
+            if(level == 0) break;
+            }
+            else continue;
+        }
+        return i;
+    }
+}
