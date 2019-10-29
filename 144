@@ -1,1 +1,38 @@
 
+// method 1: recursion
+
+class Solution {
+    private TreeNode prev = null;
+    public void flatten(TreeNode root) {
+        if(root == null) return;
+        flatten(root.right);
+        flatten(root.left);
+        root.right = prev;
+        root.left = null;
+        prev = root;
+    }
+}
+
+
+// method 2: iteration
+
+class Solution {
+    public void flatten(TreeNode root) {
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode cur = root;
+        
+        while(cur != null) {
+            if(cur.right != null)
+                stack.push(cur.right);
+            if(cur.left != null) {
+                cur.right = cur.left;
+                cur.left = null;
+            } else if(!stack.isEmpty()) {
+                TreeNode top = stack.pop();
+                cur.right = top;
+            }
+            
+            cur = cur.right;
+        }
+    }
+}
