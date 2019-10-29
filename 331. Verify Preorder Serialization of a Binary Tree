@@ -1,0 +1,19 @@
+
+class Solution {
+    public boolean isValidSerialization(String preorder) {
+        String tokens[] = preorder.split(",");
+        int count = 1;
+        
+        for(String s : tokens) {
+            if(s.equals("#")) {
+                count--;
+            } else {
+                if(count <= 0) {
+                    return false;
+                }
+                count++;
+            }
+        }
+        return count == 0;
+    }
+}
