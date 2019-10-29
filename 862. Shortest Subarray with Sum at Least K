@@ -1,0 +1,30 @@
+
+class Solution {
+    public int shortestSubarray(int[] A, int K) {
+        if(A==null)
+            throw new IllegalArgumentException();
+        
+        int len = A.length;
+        int res = len+1;
+        int[] sum = new int[len+1];
+        
+        for(int i=0; i<len; i++) {
+            sum[i+1] = sum[i] + A[i];
+        }
+        
+        Deque<Integer> queue = new LinkedList<>();
+        for(int i=0; i<=len; i++) {
+            while(!queue.isEmpty() && sum[i] - sum[queue.getFirst()] >= K) {
+                res = Math.min(res, i-queue.pollFirst());
+            }
+            
+            while(!queue.isEmpty() && sum[queue.getLast()] >= sum[i]) {
+                queue.pollLast();
+            }
+            
+            queue.addLast(i);
+        }
+        
+        return res == (len+1) ? -1:res;
+    }
+}
