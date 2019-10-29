@@ -1,1 +1,100 @@
+// method 1: one stack : 
+class Solution {
+    public int calculate(String s) {
+        if(s == null || s.length() == 0) return 0;
+        Stack<Integer> stack = new Stack<>();
+        int res = 0;
+        int sign = '+';
+        int num = 0;
+        for(int i=0; i<s.length(); i++) {
+            if(Character.isDigit(s.charAt(i))) {
+                num = s.charAt(i) - '0';
+                while(i+1<s.length() && Character.isDigit(s.charAt(i+1))) {
+                    num = num*10 + s.charAt(i+1)-'0';
+                    i++;
+                }
+            }
+            if(!Character.isDigit(s.charAt(i)) && s.charAt(i) != ' ' || i == s.length()-1) {
+                if(sign == '+') stack.push(num);
+                if(sign == '-') stack.push(-num);
+                if(sign == '*') stack.push(stack.pop() * num);
+                if(sign == '/') stack.push(stack.pop() / num);
+                sign = s.charAt(i);
+                num = 0;
+            }
+        }
+        for(int i:stack) {
+            res += i;
+        }
+        return res;
+    }
+}
 
+
+// method 2: two stacks:
+
+class Solution {
+    public int calculate(String s) {
+        Stack<Integer> stack = new Stack<>();
+        Stack<Character> optr = new Stack<>();
+        s = s.trim();
+        
+        for(int i=0; i<s.length(); i++) {
+            char c = s.charAt(i);
+            if(c == ' ') {
+                continue;
+            } else if(c == '(') {
+                optr.push(c);
+            } else if(c == '+' || c == '-' || c == '*' || c == '/') {
+                while(!optr.empty()) {
+                    if(comparePre(optr.peek(), c)) {
+                        addOptrToQ(stack, String.valueOf(optr.pop()));
+                    } else {
+                        break;
+                    }
+                }
+                optr.push(c);
+            } else if(c>='0' && c<='9') {
+                int num = 0;
+                while(i<s.length() && s.charAt(i) >= '0' && s.charAt(i) <= '9') {
+                    num = num * 10 + (s.charAt(i)-'0');
+                    i++;
+                }
+                i--;
+                stack.push(num);
+            } else if(c == ')') {
+                while(!optr.empty() && optr.peek() != '(') {
+                    addOptrToQ(stack, String.valueOf(optr.pop()));
+                }
+                if(!optr.empty() && optr.peek() == '(') {
+                    optr.pop();
+                }
+            }
+        }
+        while(!optr.empty()) {
+            addOptrToQ(stack, String.valueOf(optr.pop()));
+        }
+        
+        return stack.peek();
+    }
+    
+    private boolean comparePre(char c1, char c2) {
+        if(c1 == '*' || c1 == '/') return true;
+        else if(c1 == '(' || c2 == '*' || c2 == '/') return false;
+        else return true;
+    }
+    
+    private void addOptrToQ(Stack<Integer> stackInt, String str) {
+        int opt2 = stackInt.pop();
+        int opt1 = stackInt.pop();
+        if(str.equals("+")) {
+            stackInt.push(opt1 + opt2);
+        } else if(str.equals("-")) {
+            stackInt.push(opt1 - opt2);
+        } else if(str.equals("*")) {
+            stackInt.push(opt1 * opt2);
+        } else if(str.equals("/")) {
+            stackInt.push(opt1 / opt2);
+        }
+    }
+}
