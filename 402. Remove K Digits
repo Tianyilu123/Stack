@@ -20,9 +20,11 @@ class Solution {
             }
         }
         
-        while(stack.length() > 0 && count++ < k)
+        while(stack.length() > 0 && count < k) {
             stack.setLength(stack.length()-1);
-        
+            count++;
+        }
+            
         return stack.length() == 0 ? "0" : stack.toString();
     }
 }
