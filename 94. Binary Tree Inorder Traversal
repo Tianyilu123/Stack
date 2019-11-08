@@ -20,4 +20,9 @@ class Solution {
     }
 }
 
-// method 2:
+
+
+Each node will be traversed once so time complexity is only O(n) if n denotes to counts of nodes in this tree.
+For space complexity, using stack is just like using call stack in recursion approach. 
+Therefore, it’s space complexity will be the same with recursion approach, 
+which is O(h) (or O(logn)) if h denotes to path length of the longest path in this tree.
