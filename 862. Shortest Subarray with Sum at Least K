@@ -28,3 +28,8 @@ class Solution {
         return res == (len+1) ? -1:res;
     }
 }
+
+
+Time Complexity: O(N)O(N), where NN is the length of A.
+
+Space Complexity: O(N)O(N).
