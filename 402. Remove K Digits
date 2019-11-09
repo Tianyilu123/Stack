@@ -28,3 +28,6 @@ class Solution {
         return stack.length() == 0 ? "0" : stack.toString();
     }
 }
+
+
+// 单调栈
