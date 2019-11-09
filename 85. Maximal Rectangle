@@ -1,38 +1,47 @@
 
 class Solution {
     public int maximalRectangle(char[][] matrix) {
-        if(matrix == null || matrix.length == 0 || matrix[0] == null || matrix[0].length == 0)
-            return 0;
-        int row = matrix.length, col = matrix[0].length;
-        int height[] = new int[col];
-        int max = 0;
+        if(matrix == null || matrix.length == 0) return 0;
+        int rows = matrix.length, cols = matrix[0].length;
+        int[][] grid = new int[rows][cols];
+        buildHis(matrix, grid);
         
-        for(int i=0; i<row; i++) {
-            for(int j=0; j<col; j++) {
-                if(matrix[i][j] == '0') {
-                    height[j] = 0;
-                } else {
-                    height[j]++;
-                }
-            }
-            int area = maxSize(height);
-            max = Math.max(max, area);
+        int max = 0;
+        for(int i=0; i<rows; i++) {
+            max = Math.max(max, maxRec(grid, i));
         }
+        
         return max;
     }
     
-    private int maxSize(int[] height) {
-        int len = height.length, max = 0;
-        Stack<Integer> stack = new Stack<>();
+    private void buildHis(char[][] matrix, int[][] grid) {
+        for(int j=0; j<matrix[0].length; j++) {
+            grid[0][j] = matrix[0][j] == '1' ? 1:0;
+        }
         
-        for(int i=0; i<=len; i++) {
-            int hei = i<len ? height[i] : 0;
-            while(!stack.empty() && height[stack.peek()] > hei) {
-                int top = stack.pop();
-                int area = height[top] * (stack.empty() ? i:(i-stack.peek()-1));
-                max = Math.max(max, area);
+        for(int i=1; i<matrix.length; i++) {
+            for(int j=0; j<matrix[0].length; j++) {
+                grid[i][j] = matrix[i][j] == '1' ? grid[i-1][j]+1 : 0;
             }
-            stack.push(i);
+        }
+    }
+    
+    private int maxRec(int[][] grid, int bottom) {
+        Deque<Integer> stack = new ArrayDeque<>();
+        stack.push(-1);
+        int max = 0;
+        
+        int curIdx = 0;
+        while(curIdx < grid[bottom].length) {
+            while(stack.peek() != -1 && grid[bottom][curIdx] <= grid[bottom][stack.peek()]) {
+                max = Math.max(max, grid[bottom][stack.pop()] * (curIdx-stack.peek()-1));
+            }
+            stack.push(curIdx++);
+        }
+        
+        while(stack.peek() != -1) {
+            max = Math.max(max, grid[bottom][stack.pop()] * 
+                           (grid[bottom].length - stack.peek()-1));
         }
         return max;
     }
