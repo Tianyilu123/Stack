@@ -1,3 +1,55 @@
+// example: // -33+(2+6* 3+5-(3*14/7+2)*5)-3 + 7/5 =-45
+
+// method 1 - one stack:
+
+class Solution {
+    public int calculate(String s) {
+        if(s.length() == 0) return 0;
+        int pre = 0, res = 0;
+        char sign = '+';
+        Stack<Integer> stack = new Stack<>();
+        for(int i=0; i<s.length(); i++) {
+            char ch = s.charAt(i);
+            if(Character.isDigit(ch)) {
+                pre = pre*10 + (ch-'0');
+            }
+            if(ch == '(') {
+                int j = findClose(s.substring(i));
+                pre = calculate(s.substring(i+1, i+j));
+                i += j;
+            }
+            if(i == s.length()-1 || ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == ')') {
+                switch(sign) {
+                    case '+' : stack.push(pre); break;
+                    case '-' : stack.push(-pre); break;
+                    case '*' : stack.push(stack.pop() * pre); break;
+                    case '/' : stack.push(stack.pop() / pre); break;
+                }
+                pre = 0;
+                sign = ch;
+            }
+        }
+        while(!stack.isEmpty()) res += stack.pop();
+        return res;
+    }
+    
+    private int findClose(String sub) {
+        int level = 0;
+        int i=0;
+        for(i=0; i<sub.length(); i++) {
+            if(sub.charAt(i) == '(') level++;
+            else if(sub.charAt(i) == ')') {
+                level--;
+            if(level == 0) break;
+            }
+            else continue;
+        }
+        return i;
+    }
+}
+
+// time: O(n)
+// space: O(n)
 
 // method 1 - two stacks: 
 class Solution {
@@ -89,54 +141,5 @@ class Solution {
             case '/': return num1 / num2;
             default: throw new IllegalStateException();
         }
-    }
-}
-
-
-// method 2 - one stack:
-
-class Solution {
-    public int calculate(String s) {
-        if(s.length() == 0) return 0;
-        int pre = 0, res = 0;
-        char sign = '+';
-        Stack<Integer> stack = new Stack<>();
-        for(int i=0; i<s.length(); i++) {
-            char ch = s.charAt(i);
-            if(Character.isDigit(ch)) {
-                pre = pre*10 + (ch-'0');
-            }
-            if(ch == '(') {
-                int j = findClose(s.substring(i));
-                pre = calculate(s.substring(i+1, i+j));
-                i += j;
-            }
-            if(i == s.length()-1 || ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == ')') {
-                switch(sign) {
-                    case '+' : stack.push(pre); break;
-                    case '-' : stack.push(-pre); break;
-                    case '*' : stack.push(stack.pop() * pre); break;
-                    case '/' : stack.push(stack.pop() / pre); break;
-                }
-                pre = 0;
-                sign = ch;
-            }
-        }
-        while(!stack.isEmpty()) res += stack.pop();
-        return res;
-    }
-    
-    private int findClose(String sub) {
-        int level = 0;
-        int i=0;
-        for(i=0; i<sub.length(); i++) {
-            if(sub.charAt(i) == '(') level++;
-            else if(sub.charAt(i) == ')') {
-                level--;
-            if(level == 0) break;
-            }
-            else continue;
-        }
-        return i;
     }
 }
