@@ -1,3 +1,4 @@
+example: // -15+3-6-(4+37+8)+(6+(7+5-4))
 
 // method 1: one stack
 
@@ -31,6 +32,8 @@ class Solution {
     }
 }
 
+time:O(n)
+space:O(n)
 
 // method 2: two stacks
 
