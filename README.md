@@ -1,2 +1,2 @@
 # Stack
-22 practices
+23 + 1 practices
