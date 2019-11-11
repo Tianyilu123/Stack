@@ -37,6 +37,8 @@ class Solution {
     }
 }
 
+ time complexity is O(n)
+ worst case space complexity of O(n)
 
 // method 3:
 
