@@ -23,6 +23,8 @@ class Solution {
         return stack.isEmpty();
     }
 }
+// time: O(n)
+// space: O(n)
 
 
 // method 2:
