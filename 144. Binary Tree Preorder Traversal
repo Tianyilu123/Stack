@@ -17,6 +17,9 @@ class Solution {
     }
 }
 
+// time: O(n)
+// space: O(h)
+
 // method 2:
 
 class Solution {
