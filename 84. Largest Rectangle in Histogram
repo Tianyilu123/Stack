@@ -28,3 +28,26 @@ class Solution {
 // Space complexity : O(n). Stack is used.
 
 
+// method 2:
+class Solution {
+    public int largestRectangleArea(int[] heights) {
+        int len = heights.length;
+        int res = 0;
+        Stack<Integer> stack = new Stack<>();
+        stack.add(-1);
+        
+        
+        for(int i=0; i< heights.length; i++) {
+            while(stack.peek() != -1 && heights[stack.peek()] > heights[i]) {
+                res = Math.max(res, heights[stack.pop()] * (i-stack.peek()-1));
+            }
+            stack.add(i);
+        }
+        
+        while(stack.peek() != -1) {
+            res = Math.max(res, heights[stack.pop()] * (len - stack.peek()-1));
+        }
+        
+        return res;
+    }
+}
